@@ -1,4 +1,6 @@
-﻿namespace SnpMarketstackService.Settings
+﻿using System;
+
+namespace SnpMarketstackService.Settings
 {
     public class HttpHeaderSetting
     {

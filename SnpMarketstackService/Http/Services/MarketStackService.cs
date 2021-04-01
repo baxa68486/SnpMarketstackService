@@ -21,8 +21,9 @@ namespace SnpMarketstackService.Http.Services
         public async Task<SPIndexDTO> GetMarketStackIndexes(string marketStackIndexProviderUrl, 
                                                             HttpHeaderSetting httpHeaderSetting)
         {
-            using (var response = await _httpClientHandler.GetAsync(marketStackIndexProviderUrl, httpHeaderSetting))
+            using (var response = await _httpClientHandler.GetAsync(marketStackIndexProviderUrl))
             {
+                _httpClientHandler.SetHttpHeaderSettings(httpHeaderSetting);
                 var stream = await _streamHandler.ReadAsStreamAsync(response);
 
                 if (response.IsSuccessStatusCode)

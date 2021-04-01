@@ -13,18 +13,22 @@ namespace SnpMarketstackService.Http
 
         public HttpClient HttpClientManager => _httpClient;
 
-        public HttpResponseMessage Get(string url, HttpHeaderSetting headerSettings)
+
+        public HttpResponseMessage Get(string url)
         {
             throw new NotImplementedException();
         }
 
-        public async Task<HttpResponseMessage> GetAsync(string url, HttpHeaderSetting headerSettings)
+        public async Task<HttpResponseMessage> GetAsync(string url)
+        {
+            return await _httpClient.GetAsync(url);
+        }
+
+        public void SetHttpHeaderSettings(HttpHeaderSetting headerSettings)
         {
             _httpClient.BaseAddress = new Uri(headerSettings.BaseAddress);
             _httpClient.DefaultRequestHeaders.Accept.Clear();
             _httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(headerSettings.MediaType));
-
-            return await _httpClient.GetAsync(url);
         }
 
         public void Dispose()

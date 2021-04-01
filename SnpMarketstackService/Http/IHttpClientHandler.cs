@@ -6,7 +6,8 @@ namespace SnpMarketstackService.Services
 {
     public interface IHttpClientHandler
     {
-        HttpResponseMessage Get(string url, HttpHeaderSetting headerSetting);
-        Task<HttpResponseMessage> GetAsync(string url, HttpHeaderSetting headerSetting);
+        HttpResponseMessage Get(string url);
+        Task<HttpResponseMessage> GetAsync(string url);
+        void SetHttpHeaderSettings(HttpHeaderSetting headerSettings);
     }
 }
