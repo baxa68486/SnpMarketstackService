@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+option csharp_namespace = "SnpMarketstackService.Protos";
+
+service Customer {
+   rpc GetCustomerInfo(CustomerLookupModel) returns (CustomerModel);
+   //in c# to call this method we do need pass anything, 
+   //but in grpc we still neeed to pass empty model as shown in example NewCustomerRequest
+   rpc GetNewCustomers (NewCustomerRequest) returns (stream CustomerModel);
+}
+
+message NewCustomerRequest{
+
+}
+
+message CustomerLookupModel {
+	int32 userId = 1;
+}
+
+// the values 1, 2, 3, 4, 5 - mean the order of properties. 
+// it help the grpc to encode and decode it in correct order
+message CustomerModel {
+	string firstName = 1;
+	string lastName = 2;
+	string emailAddress = 3;
+	bool isAlive = 4;
+	int32 age = 5;
+}

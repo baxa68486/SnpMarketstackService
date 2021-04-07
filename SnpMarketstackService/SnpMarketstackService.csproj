@@ -7,10 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Protos\customers.proto" />
     <None Remove="StreamService\jbazwyoz.zyr~" />
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="Protos\customers.proto" GrpcServices="Server" />
     <Protobuf Include="Protos\greet.proto" GrpcServices="Server" />
   </ItemGroup>
 

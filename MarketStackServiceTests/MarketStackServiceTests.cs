@@ -1,6 +1,6 @@
 using Moq;
-using Newtonsoft.Json;
 using SnpMarketstackService.DTOs;
+using SnpMarketstackService.Exceptions;
 using SnpMarketstackService.Http.Services;
 using SnpMarketstackService.Services;
 using SnpMarketstackService.Settings;
@@ -10,7 +10,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -19,7 +18,7 @@ namespace MarketStackServiceTests
     public class MarketStackServiceTests
     {
         [Fact]
-        public async Task GetStackMarkerStackIndexes()
+        public async Task GetMarketStackIndexes_HtttReponseNotContainsError_ReturnsValidContent()
         {
             Mock<IHttpClientHandler> _mockHttpClientHandler = new Mock<IHttpClientHandler>();
             Mock<IStreamHandler> _mockStreamHandler = new Mock<IStreamHandler>();
@@ -44,6 +43,32 @@ namespace MarketStackServiceTests
             var url = "api/testURL";
             var res = await marketStackService.GetMarketStackIndexes(url, setting);
             Assert.Equal(2, res.Data.Count);
+
+            Assert.Equal(3, res.Data[0].Low);
+            Assert.Equal(4, res.Data[0].High);
+            Assert.Equal(6, res.Data[1].Low);
+            Assert.Equal(7, res.Data[1].High);
+        }
+
+        [Fact]
+        public async Task GetMarketStackIndexes_HtttReponseContainsError_ThrowsCustomException()
+        {
+            Mock<IHttpClientHandler> _mockHttpClientHandler = new Mock<IHttpClientHandler>();
+            Mock<IStreamHandler> _mockStreamHandler = new Mock<IStreamHandler>();
+
+            _mockHttpClientHandler.Setup(httpClient => httpClient.GetAsync(It.IsAny<string>()))
+                                                                  .ReturnsAsync(CreateHttpResponseMessage(HttpStatusCode.InternalServerError));
+
+            MarketStackService marketStackService = new MarketStackService(_mockHttpClientHandler.Object, _mockStreamHandler.Object);
+
+            HttpHeaderSetting setting = CreateHttpHeaderSetting("https://marketstack.com/", "testKey", "json");
+            var url = "api/testURL";
+            const int internalServerError = 500;
+            
+            Func<Task<SPIndexDTO>> deleg = () => marketStackService.GetMarketStackIndexes(url, setting);
+
+            var exceptionDetails = await Assert.ThrowsAsync<ApiException>(deleg);
+            Assert.Equal(exceptionDetails.StatusCode, internalServerError);
         }
 
         private SPIndexValueDTO CreateMockedSPIndexValueDTO(int low, int high) =>
